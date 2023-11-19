@@ -41,12 +41,40 @@ app.get("/contact", function(req, res) {
 app.get("/posts/:postID", function(req, res) {
   const postId = req.params.postID;
   Post.findOne({_id: postId}, function(err, post) {
-    res.render("post", {title: post.title, content: post.content});
+    res.render("post", {id: postId, title: post.title, content: post.content});
   })
 })
 
+app.post("/posts/:postID", function(req, res) {
+  const postId = req.params.postID;
+  Post.deleteOne({_id: postId}, function (err) {
+    if (!err) {
+      res.redirect("/");
+    }
+  })
+})
+
+app.get("/update/:postID", function(req, res) {
+  const postId = req.params.postID;
+  Post.findOne({_id: postId}, function(err, post) {
+    res.render("publish", {path: `/update/${postId}`, title: post.title, content: post.content});
+  })
+})
+
+app.post("/update/:postID", function(req, res) {
+  const postId = req.params.postID;
+  Post.findOneAndUpdate({_id: postId}, {
+    title: req.body.postTitle,
+    content: req.body.postBody
+  }, function (err) {
+    if (!err) {
+      res.redirect("/");
+    }
+  });
+})
+
 app.get("/compose", function(req, res) {
-  res.render("compose");
+  res.render("publish", {path: "/compose", title: "", content: ""});
 })
 
 app.post("/compose", function(req, res) {
