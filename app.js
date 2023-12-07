@@ -41,7 +41,8 @@ app.get("/contact", function(req, res) {
 app.get("/posts/:postID", function(req, res) {
   const postId = req.params.postID;
   Post.findOne({_id: postId}, function(err, post) {
-    res.render("post", {id: postId, title: post.title, content: post.content});
+    let contentArray = post.content.split('\r');
+    res.render("post", {id: postId, title: post.title, content: contentArray});
   })
 })
 
@@ -68,7 +69,7 @@ app.post("/update/:postID", function(req, res) {
     content: req.body.postBody
   }, function (err) {
     if (!err) {
-      res.redirect("/");
+      res.redirect(`/posts/${postId}`);
     }
   });
 })
@@ -89,4 +90,4 @@ app.post("/compose", function(req, res) {
   });
 })
 
-app.listen(process.env.PORT)
+app.listen(3000)
